@@ -25,7 +25,21 @@
 						<field name="fecha_confirmacion"></field>
 						<field name="num_presupuesto" readonly="1"></field>
 					</group>
-				</group></sheet>                
+				</group>
+				<notebook>
+					<page string="Líneas de solicitud">
+						<field name="lineas_solicitud_ids">
+							<tree editable="bottom">
+								<control>
+									<create name="add_product_control" string="Agregar líneas de solicitud"/>
+								</control>
+								<field name="producto"/>
+								<field name="cantidad"/>
+								<field name="unidad_medida"/>
+							</tree>
+						</field>
+					</page>
+				</notebook>   </sheet>             
             </form>
         </field>
         </record>

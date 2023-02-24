@@ -24,7 +24,13 @@ class ExdooRequest(models.Model):
     termino_pago = fields.Many2one(comodel_name="account.payment.term", string="Termino de pago")
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
     compania = fields.Many2one(comodel_name="res.company", string="Compañía")
+    compania = fields.Many2one(comodel_name="res.company", string="Compañía")
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
+    lineas_solicitud_ids = fields.One2many(
+        comodel_name="lineas.solicitud",
+        inverse_name="lineas_solicitud_id",
+        string="Lineas de solicitud",
+    )
     num_presupuesto = fields.Char(string="Número presupuesto", copy=False)
     state = fields.Selection(
         selection=[

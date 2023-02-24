@@ -25,3 +25,9 @@ class LineasSolicitud(models.Model):
         copy=False
     )
     precio_unitario = fields.Float(string="Precio unitario")
+    lineas_solicitud_id = fields.Many2one(
+        comodel_name="exdoo.request",
+        string="Exdoo Request",
+    )
+
+    
