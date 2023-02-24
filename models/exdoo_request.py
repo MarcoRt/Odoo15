@@ -25,6 +25,7 @@ class ExdooRequest(models.Model):
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
     compania = fields.Many2one(comodel_name="res.company", string="Compañía")
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
+    num_presupuesto = fields.Char(string="Número presupuesto", copy=False)
     state = fields.Selection(
         selection=[
             ("borrador", "Borrador"),
@@ -38,8 +39,21 @@ class ExdooRequest(models.Model):
     def aprobar_presupuesto(self):
         logger.info("Se cambió el state a aprobado")
         self.state = "aprobado"
-        self.fecha_aprobado = fields.Datetime.now()
+        self.fecha_confirmacion = fields.Datetime.now()
 
     def cancelar_presupuesto(self):
         logger.info("Se cambió el state a cancelado")
         self.state = "cancelado"
+    
+    @api.model
+    def create(self, variables):
+        logger.info("Variables: {0}".format(variables))
+        sequence_obj = self.env["ir.sequence"]
+        correlativo = sequence_obj.next_by_code("secuencia.solicitud")
+        variables["num_presupuesto"] = correlativo
+        return super(ExdooRequest, self).create(variables)
+    
+    def copy(self, default=None):
+        default = dict(default or {})
+        default["name"] = self.name + " (Copia)"
+        return super(ExdooRequest, self).copy(default)

@@ -10,8 +10,36 @@
 					<button string="Cancelar" type='object' name='cancelar_presupuesto' states = 'borrador,aprobado'/>
 					<field name='state' widget='statusbar' statusbar_visible='borrador,aprobado'/>
 				</header>
-                <field name="name" placeholder="Nombre"></field>
+				<sheet>
+					<group>
+					<group>
+						<field name="name" placeholder="Nombre"></field>
+						<field name="cliente"></field>
+						<field name="usuario"></field>
+						<field name="compania"></field>
+					</group>
+					<group>
+						<field name="termino_pago"></field>
+						<field name="moneda"></field>
+						<field name="fecha_creacion" readonly="1"></field>
+						<field name="fecha_confirmacion"></field>
+						<field name="num_presupuesto" readonly="1"></field>
+					</group>
+				</group></sheet>                
             </form>
         </field>
         </record>
+		<record id="exdoo_request_view_tree" model="ir.ui.view">
+			<field name="name">exdoo.request.view.tree</field>
+			<field name="model">exdoo.request</field>
+			<field name="arch" type="xml">
+				<tree decoration-danger="state == 'cancelado'" decoration-success="state == 'aprobado'">
+					<field name="name"></field>
+					<field name="fecha_creacion"></field>
+					<field name="fecha_confirmacion"></field>
+					<field name="num_presupuesto"></field>
+					<field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
+				</tree>
+			</field>
+		</record>
 </odoo>
