@@ -4,7 +4,14 @@
 		<field name='name'>Vista formulario de exdoo request</field>
 		<field name='model'>exdoo.request</field>
 		<field name="arch" type="xml">
-			<form></form>
+			<form>
+                <header>
+					<button string="Aprobar" type="object" name='aprobar_presupuesto' class='oe_highlight' states = 'borrador'/>
+					<button string="Cancelar" type='object' name='cancelar_presupuesto' states = 'borrador,aprobado'/>
+					<field name='state' widget='statusbar' statusbar_visible='borrador,aprobado'/>
+				</header>
+                <field name="name" placeholder="Nombre"></field>
+            </form>
         </field>
         </record>
 </odoo>

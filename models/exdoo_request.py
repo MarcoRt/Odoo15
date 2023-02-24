@@ -13,7 +13,7 @@ class ExdooRequest(models.Model):
 
     _description = "Exdoo Request"
 
-    nombre = fields.Char(String='Nombre')
+    name = fields.Char(string='Nombre')
     fecha_creacion = fields.Datetime(
         string="Fecha de creación",
         copy=False,
@@ -35,3 +35,11 @@ class ExdooRequest(models.Model):
         string="Estados",
         copy=False,
     )
+    def aprobar_presupuesto(self):
+        logger.info("Se cambió el state a aprobado")
+        self.state = "aprobado"
+        self.fecha_aprobado = fields.Datetime.now()
+
+    def cancelar_presupuesto(self):
+        logger.info("Se cambió el state a cancelado")
+        self.state = "cancelado"

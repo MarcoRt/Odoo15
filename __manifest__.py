@@ -13,5 +13,6 @@ Módulo para control de ventas, compras y movimientos.
 ======================================
 
     """,
-    'data': ['views/menu.xml'],
+    'data': ['views/menu.xml',
+            'views/exdoo_request_view.xml'],
 }
