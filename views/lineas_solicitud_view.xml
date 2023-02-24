@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_lineas_solicitud_form" model="ir.ui.view">
+        <field name='name'>Vista formulario de exdoo request</field>
+		<field name='model'>lineas.solicitud</field>
+		<field name="arch" type="xml">
+                <tree>
+					<field name="producto"></field>
+					<field name="cantidad"></field>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
