@@ -13,22 +13,22 @@
 				<sheet>
 					<group>
 					<group>
-						<field name="name" placeholder="Nombre"></field>
-						<field name="cliente"></field>
-						<field name="usuario"></field>
-						<field name="compania"></field>
+						<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="cliente"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 					</group>
 					<group>
-						<field name="termino_pago"></field>
-						<field name="moneda"></field>
-						<field name="fecha_creacion" readonly="1"></field>
-						<field name="fecha_confirmacion"></field>
-						<field name="num_presupuesto" readonly="1"></field>
+						<field name="termino_pago"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="moneda"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="fecha_creacion" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="fecha_confirmacion"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						<field name="num_presupuesto" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 					</group>
 				</group>
 				<notebook>
 					<page string="Líneas de solicitud">
-						<field name="lineas_solicitud_ids">
+						<field name="lineas_solicitud_ids"  attrs="{'readonly': [('state', '!=', 'borrador')]}">
 							<tree editable="bottom">
 								<control>
 									<create name="add_product_control" string="Agregar líneas de solicitud"/>
