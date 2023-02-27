@@ -20,13 +20,9 @@ class ExdooRequest(models.Model):
             for line in i.lineas_solicitud_ids:
                 price = line.precio_unitario
                 taxes = line.tax_id.compute_all(price)
-                print("Soy taxes ",taxes)
                 total_impuesto_sum += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 total_calculado_sum += taxes['total_included']
                 subtotal_calculado_sum +=  taxes['total_excluded']
-            print("Soy total_impuesto_sum ",total_impuesto_sum)
-            print("Soy total_calculado_sum ",total_calculado_sum)
-            print("Soy subtotal_calculado_sum ",subtotal_calculado_sum)
             i.total_impuesto = total_impuesto_sum
             i.total_calculado = total_calculado_sum
             i.subtotal_calculado = subtotal_calculado_sum

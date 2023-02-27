@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_exdoo_request" model="ir.module.category">
+        <field name="name">Exdoo Request</field>
+        <field name="sequence">1</field>
+    </record>
+    
+    <record id="module_category_exdoo_request_sub" model="ir.module.category">
+        <field name="name">ExdooRequest</field>
+        <field name="sequence">1</field>
+        <field name="parent_id" ref="module_category_exdoo_request"></field>
+    </record>
+    
+    <!-- Grupo de usuarios -->
+    <record id="group_exdoo_request_usuario" model="res.groups">
+        <field name="name">Usuario: solo puede ver sus propios presupuestos</field>
+        <field name="category_id" ref="module_category_exdoo_request_sub"/>
+    </record>
+
+    <!-- Grupo de administradores -->
+    <record id="group_exdoo_request_administrador" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="category_id" ref="module_category_exdoo_request_sub"/>
+        <field name="implied_ids" eval="[(4, ref('group_exdoo_request_usuario'))]"/>
+    </record>
+
+</odoo>

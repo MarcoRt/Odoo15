@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acceso_request_usuario,acceso request usuario,model_exdoo_request,group_exdoo_request_usuario,1,0,0,0
+acceso_lineas_solicitud_usuario,acceso lineas solicitud usuario,model_lineas_solicitud,group_exdoo_request_usuario,1,0,0,0
+
+acceso_request_administrador,acceso request administrador,model_exdoo_request,group_exdoo_request_administrador,1,0,0,0
+acceso_lineas_solicitud_administrador,acceso lineas solicitud administrador,model_lineas_solicitud,group_exdoo_request_administrador,1,0,0,0
