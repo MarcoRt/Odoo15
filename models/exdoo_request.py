@@ -12,7 +12,25 @@ class ExdooRequest(models.Model):
     _name = "exdoo.request"
 
     _description = "Exdoo Request"
-
+    
+    @api.depends('lineas_solicitud_ids')
+    def _compute_amount(self):
+        total_impuesto_sum = total_calculado_sum = subtotal_calculado_sum = 0
+        for i in self:
+            for line in i.lineas_solicitud_ids:
+                price = line.precio_unitario
+                taxes = line.tax_id.compute_all(price)
+                print("Soy taxes ",taxes)
+                total_impuesto_sum += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
+                total_calculado_sum += taxes['total_included']
+                subtotal_calculado_sum +=  taxes['total_excluded']
+            print("Soy total_impuesto_sum ",total_impuesto_sum)
+            print("Soy total_calculado_sum ",total_calculado_sum)
+            print("Soy subtotal_calculado_sum ",subtotal_calculado_sum)
+            i.total_impuesto = total_impuesto_sum
+            i.total_calculado = total_calculado_sum
+            i.subtotal_calculado = subtotal_calculado_sum
+        
     name = fields.Char(string='Nombre')
     fecha_creacion = fields.Datetime(
         string="Fecha de creación",
@@ -23,7 +41,6 @@ class ExdooRequest(models.Model):
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(comodel_name="account.payment.term", string="Termino de pago")
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
-    compania = fields.Many2one(comodel_name="res.company", string="Compañía")
     compania = fields.Many2one(comodel_name="res.company", string="Compañía")
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
     lineas_solicitud_ids = fields.One2many(
@@ -42,6 +59,15 @@ class ExdooRequest(models.Model):
         string="Estados",
         copy=False,
     )
+    currency_id = fields.Many2one(
+        comodel_name = 'res.currency',
+        string = 'Moneda',
+        default=lambda self: self.env.company.currency_id.id 
+    )
+    tax_id = fields.Many2many('account.tax', string='Taxes')
+    subtotal_calculado = fields.Monetary(string="Subtotal",store=False, compute="_compute_amount")
+    total_calculado = fields.Monetary(string="Total",store=False, compute="_compute_amount")
+    total_impuesto = fields.Monetary(string="Total impuesto",store=False, compute="_compute_amount")
     def aprobar_presupuesto(self):
         logger.info("Se cambió el state a aprobado")
         self.state = "aprobado"
@@ -63,3 +89,4 @@ class ExdooRequest(models.Model):
         default = dict(default or {})
         default["name"] = self.name + " (Copia)"
         return super(ExdooRequest, self).copy(default)
+

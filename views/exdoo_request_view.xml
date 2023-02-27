@@ -35,9 +35,31 @@
 								</control>
 								<field name="producto"/>
 								<field name="cantidad"/>
+								<field name="precio_unitario"/>
 								<field name="unidad_medida"/>
+								<field name="currency_id" invisible="1"/>
+								<field name="company_id"/>
+								<field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.compania)]"/>
+								<field name="subtotal_calculado"/>
 							</tree>
 						</field>
+						<group col="6" class="mt-2 mt-md-0">
+
+							<group>
+							</group>
+
+							<group class="oe_subtotal_footer oe_right" colspan="2">
+								<field name="subtotal_calculado" widget="monetary" options="{'currrency_field': 'currency_id'}"/>
+								<field name="total_impuesto"/>
+								<div class="oe_subtotal_footer_separator oe_line o_tdlabel">
+									<label for="total_calculado"/>
+								</div>
+								<field name="total_calculado" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'} "/>
+							</group>
+
+							<div class="oe_clear"/>
+
+						</group>
 					</page>
 				</notebook>   </sheet>             
             </form>
