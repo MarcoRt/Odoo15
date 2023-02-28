@@ -18,13 +18,16 @@ class LineasSolicitud(models.Model):
             self.tax_id = self.producto.taxes_id
             self.unidad_medida = self.producto.uom_id
     
-    @api.depends('precio_unitario')
+    @api.depends('precio_unitario','descuento')
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
         for line in self:
             price = line.precio_unitario
+            if line.descuento:
+                price = price - (price*(line.descuento/100))
+            print("Soy el price: ", price)
             taxes = line.tax_id.compute_all(price)
             line.update({
                 'total_impuesto': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
@@ -55,6 +58,7 @@ class LineasSolicitud(models.Model):
         string = 'Moneda',
         default=lambda self: self.env.company.currency_id.id 
     )
+    descuento = fields.Float(string="Desc %")
     tax_id = fields.Many2many('account.tax', string='Taxes')
     subtotal_calculado = fields.Monetary(string="Subtotal",store=False, compute="_compute_amount")
     total_calculado = fields.Monetary(string="Total",store=False, compute="_compute_amount")

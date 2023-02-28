@@ -9,6 +9,9 @@
             <xpath expr="//group[@id='secundary_information']/field[@name='termino_pago']" position="attributes">
                 <attribute name="readonly">1</attribute>
             </xpath>
+            <xpath expr="//page[@id='lineas_solicitud_ids']/field[@name='lineas_solicitud_ids']/tree[@editable='bottom']/field[@name='currency_id']" position="after">
+                <field name="descuento" readonly="1"></field>
+            </xpath>
         </field>
     </record>
 </odoo>

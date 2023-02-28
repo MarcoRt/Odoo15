@@ -20,16 +20,16 @@ class ExdooRequest(models.Model):
                 self.termino_pago = self.cliente.terminos_pagos[0]
                 self.terminos_pagos = self.cliente.terminos_pagos
     
-    @api.depends('lineas_solicitud_ids')
+    @api.depends('lineas_solicitud_ids.total_calculado')
     def _compute_amount(self):
-        total_impuesto_sum = total_calculado_sum = subtotal_calculado_sum = 0
+        total_impuesto_sum = total_calculado_sum = subtotal_calculado_sum = descuento_sum = 0
         for i in self:
             for line in i.lineas_solicitud_ids:
-                price = line.precio_unitario
-                taxes = line.tax_id.compute_all(price)
-                total_impuesto_sum += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
-                total_calculado_sum += taxes['total_included']
-                subtotal_calculado_sum +=  taxes['total_excluded']
+                total_impuesto_sum += line.total_impuesto
+                total_calculado_sum += line.total_calculado
+                subtotal_calculado_sum +=  line.subtotal_calculado
+                descuento_sum += line.descuento
+            i.descuento = descuento_sum
             i.total_impuesto = total_impuesto_sum
             i.total_calculado = total_calculado_sum
             i.subtotal_calculado = subtotal_calculado_sum
@@ -67,6 +67,7 @@ class ExdooRequest(models.Model):
         default=lambda self: self.env.company.currency_id.id 
     )
     tax_id = fields.Many2many('account.tax', string='Taxes')
+    descuento = fields.Float(string="Descuento")
     terminos_pagos = fields.Many2many(comodel_name="account.payment.term", string="Terminos de pagos")
     subtotal_calculado = fields.Monetary(string="Subtotal",store=False, compute="_compute_amount")
     total_calculado = fields.Monetary(string="Total",store=False, compute="_compute_amount")

@@ -28,7 +28,7 @@
 						</group>
 					</group>
 					<notebook>
-						<page string="Líneas de solicitud">
+						<page id="lineas_solicitud_ids" string="Líneas de solicitud">
 							<field name="lineas_solicitud_ids"  attrs="{'readonly': [('state', '!=', 'borrador')]}">
 								<tree editable="bottom">
 									<control>
