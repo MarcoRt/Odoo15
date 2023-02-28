@@ -16,7 +16,8 @@ class ExdooRequest(models.Model):
     @api.onchange('cliente')
     def _onchange_name(self):
         if self.cliente:
-            self.termino_pago = self.cliente.terminos_pagos
+            if len(self.cliente.terminos_pagos) > 0:
+                self.termino_pago = self.cliente.terminos_pagos[0]
     
     @api.depends('lineas_solicitud_ids')
     def _compute_amount(self):

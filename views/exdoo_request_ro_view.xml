@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="exdoo_request_ro_view" model="ir.ui.view">
+        <field name="name">exdoo.request.ro.view</field>
+        <field name="model">exdoo.request</field>
+        <field name="inherit_id" ref="odoo15.view_exdoo_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@id='secundary_information']/field[@name='termino_pago']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

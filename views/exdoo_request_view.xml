@@ -14,11 +14,11 @@
 					<group>
 						<group>
 							<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-							<field name="cliente" domain="[('company_id', '=', 1)]"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="cliente" domain="[('is_company', '=', True)]"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 						</group>
-						<group>
+						<group id="secundary_information">
 							<field name="termino_pago"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="moneda"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="fecha_creacion" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
