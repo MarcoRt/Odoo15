@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_clientes_pagos_form" model="ir.ui.view">
+        <field name="name">view_clientes_pagos_form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Métodos de pago">
+                    <field name="terminos_pagos">
+                        <tree editable="bottom">
+                            <control>
+                                <create name="add_cliente_pago" string="Agregar formas de pago."/>
+                            </control>
+                            <field name="name"></field>
+                            <field name="note"></field>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    
+
+</odoo>

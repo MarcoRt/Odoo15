@@ -4,7 +4,7 @@
     'name': 'Modulo exdoo request',
     'version': '1.0',
     'category': 'exdoo_request',
-    'depends': ['sale'],
+    'depends': ['base','sale'],
     'author': 'Marco Rodriguez',
     'summary': 'Módulo para control de ventas, compras y movimientos.',
     'website': '',
@@ -17,6 +17,7 @@ Módulo para control de ventas, compras y movimientos.
             'security/ir.model.access.csv',
             'views/menu.xml',
             'views/exdoo_request_view.xml',
+            'views/cliente_pagos.xml',
             'views/lineas_solicitud_view.xml',
             'data/secuencia.xml',],
 }

@@ -13,6 +13,11 @@ class ExdooRequest(models.Model):
 
     _description = "Exdoo Request"
     
+    @api.onchange('cliente')
+    def _onchange_name(self):
+        if self.cliente:
+            self.termino_pago = self.cliente.terminos_pagos
+    
     @api.depends('lineas_solicitud_ids')
     def _compute_amount(self):
         total_impuesto_sum = total_calculado_sum = subtotal_calculado_sum = 0
@@ -32,7 +37,6 @@ class ExdooRequest(models.Model):
         string="Fecha de creación",
         copy=False,
         default=lambda self: fields.Datetime.now())
-
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(comodel_name="account.payment.term", string="Termino de pago")

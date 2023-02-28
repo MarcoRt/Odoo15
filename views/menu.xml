@@ -10,6 +10,7 @@
 		<field name="res_model">lineas.solicitud</field>
 		<field name="view_mode">tree,form</field>
 	</record>
+
 	<menuitem id="menu_horizontal_exdoo_request" name="Solicitudes" parent="sale.sale_order_menu" action="action_open_exdoo_request" sequence="0"/>
 	<menuitem id="menu_horizontal_lineas_solicitud" name="Líneas de solicitud" parent="sale.sale_order_menu" action="action_open_lineas_solicitud"/>
 </odoo>

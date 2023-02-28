@@ -14,7 +14,7 @@
 					<group>
 						<group>
 							<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-							<field name="cliente"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="cliente" domain="[('company_id', '=', 1)]"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 						</group>

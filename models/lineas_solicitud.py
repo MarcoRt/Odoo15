@@ -15,7 +15,6 @@ class LineasSolicitud(models.Model):
     @api.onchange('producto')
     def _onchange_name(self):
         if self.producto:
-            print("Soy self.producto.tax_id ",self.producto.taxes_id)
             self.tax_id = self.producto.taxes_id
             self.unidad_medida = self.producto.uom_id
     
