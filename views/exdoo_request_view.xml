@@ -19,7 +19,8 @@
 							<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 						</group>
 						<group id="secundary_information">
-							<field name="termino_pago"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="termino_pago" domain="[('id','in',terminos_pagos)]" attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="terminos_pagos" invisible="1"></field>
 							<field name="moneda"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="fecha_creacion" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="fecha_confirmacion"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>

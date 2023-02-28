@@ -18,6 +18,7 @@ class ExdooRequest(models.Model):
         if self.cliente:
             if len(self.cliente.terminos_pagos) > 0:
                 self.termino_pago = self.cliente.terminos_pagos[0]
+                self.terminos_pagos = self.cliente.terminos_pagos
     
     @api.depends('lineas_solicitud_ids')
     def _compute_amount(self):
@@ -66,6 +67,7 @@ class ExdooRequest(models.Model):
         default=lambda self: self.env.company.currency_id.id 
     )
     tax_id = fields.Many2many('account.tax', string='Taxes')
+    terminos_pagos = fields.Many2many(comodel_name="account.payment.term", string="Terminos de pagos")
     subtotal_calculado = fields.Monetary(string="Subtotal",store=False, compute="_compute_amount")
     total_calculado = fields.Monetary(string="Total",store=False, compute="_compute_amount")
     total_impuesto = fields.Monetary(string="Total impuesto",store=False, compute="_compute_amount")
