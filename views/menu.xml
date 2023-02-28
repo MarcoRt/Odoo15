@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
-    <record id="action_open_exdoo_request" model="ir.actions.act_window">
-        <field name="name">ExdooRequest</field>
-        <field name="res_model">exdoo.request</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-    <record id="action_open_lineas_solicitud" model="ir.actions.act_window">
-        <field name="name">LineasSolicitud</field>
-        <field name="res_model">lineas.solicitud</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-    <menuitem id="menu_horizontal_exdoo_request" name="Solicitudes" parent="sale.sale_order_menu" action="action_open_exdoo_request" sequence="0"/>
-    <menuitem id="menu_horizontal_lineas_solicitud" name="Líneas de solicitud" parent="sale.sale_order_menu" action="action_open_lineas_solicitud"/>
+	<record id="action_open_exdoo_request" model="ir.actions.act_window">
+		<field name="name">ExdooRequest</field>
+		<field name="res_model">exdoo.request</field>
+		<field name="view_mode">tree,form,search</field>
+	</record>
+	<record id="action_open_lineas_solicitud" model="ir.actions.act_window">
+		<field name="name">LineasSolicitud</field>
+		<field name="res_model">lineas.solicitud</field>
+		<field name="view_mode">tree,form</field>
+	</record>
+	<menuitem id="menu_horizontal_exdoo_request" name="Solicitudes" parent="sale.sale_order_menu" action="action_open_exdoo_request" sequence="0"/>
+	<menuitem id="menu_horizontal_lineas_solicitud" name="Líneas de solicitud" parent="sale.sale_order_menu" action="action_open_lineas_solicitud"/>
 </odoo>

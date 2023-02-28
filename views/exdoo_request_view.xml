@@ -1,81 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_exdoo_request_form" model="ir.ui.view">
+	<record id="view_exdoo_request_form" model="ir.ui.view">
 		<field name='name'>Vista formulario de exdoo request</field>
 		<field name='model'>exdoo.request</field>
 		<field name="arch" type="xml">
 			<form>
-                <header>
+				<header>
 					<button string="Aprobar" type="object" name='aprobar_presupuesto' class='oe_highlight' states = 'borrador'/>
 					<button string="Cancelar" type='object' name='cancelar_presupuesto' states = 'borrador,aprobado'/>
 					<field name='state' widget='statusbar' statusbar_visible='borrador,aprobado'/>
 				</header>
 				<sheet>
 					<group>
-					<group>
-						<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="cliente"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-					</group>
-					<group>
-						<field name="termino_pago"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="moneda"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="fecha_creacion" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="fecha_confirmacion"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-						<field name="num_presupuesto" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
-					</group>
-				</group>
-				<notebook>
-					<page string="Líneas de solicitud">
-						<field name="lineas_solicitud_ids"  attrs="{'readonly': [('state', '!=', 'borrador')]}">
-							<tree editable="bottom">
-								<control>
-									<create name="add_product_control" string="Agregar líneas de solicitud"/>
-								</control>
-								<field name="producto"/>
-								<field name="cantidad"/>
-								<field name="precio_unitario"/>
-								<field name="unidad_medida"/>
-								<field name="currency_id" invisible="1"/>
-								<field name="company_id"/>
-								<field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.compania)]"/>
-								<field name="subtotal_calculado"/>
-							</tree>
-						</field>
-						<group col="6" class="mt-2 mt-md-0">
-
-							<group>
-							</group>
-
-							<group class="oe_subtotal_footer oe_right" colspan="2">
-								<field name="subtotal_calculado" widget="monetary" options="{'currrency_field': 'currency_id'}"/>
-								<field name="total_impuesto"/>
-								<div class="oe_subtotal_footer_separator oe_line o_tdlabel">
-									<label for="total_calculado"/>
-								</div>
-								<field name="total_calculado" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'} "/>
-							</group>
-
-							<div class="oe_clear"/>
-
+						<group>
+							<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="cliente"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 						</group>
-					</page>
-				</notebook>   </sheet>             
-            </form>
-        </field>
-        </record>
-		<record id="exdoo_request_view_tree" model="ir.ui.view">
-			<field name="name">exdoo.request.view.tree</field>
-			<field name="model">exdoo.request</field>
-			<field name="arch" type="xml">
-				<tree decoration-danger="state == 'cancelado'" decoration-success="state == 'aprobado'">
-					<field name="name"></field>
-					<field name="fecha_creacion"></field>
-					<field name="fecha_confirmacion"></field>
-					<field name="num_presupuesto"></field>
-					<field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
-				</tree>
-			</field>
-		</record>
+						<group>
+							<field name="termino_pago"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="moneda"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="fecha_creacion" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="fecha_confirmacion"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="num_presupuesto" readonly="1"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+						</group>
+					</group>
+					<notebook>
+						<page string="Líneas de solicitud">
+							<field name="lineas_solicitud_ids"  attrs="{'readonly': [('state', '!=', 'borrador')]}">
+								<tree editable="bottom">
+									<control>
+										<create name="add_product_control" string="Agregar líneas de solicitud"/>
+									</control>
+									<field name="producto"/>
+									<field name="cantidad"/>
+									<field name="precio_unitario" readonly="1"/>
+									<field name="unidad_medida"/>
+									<field name="currency_id" invisible="1"/>
+									<field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.compania)]"/>
+									<field name="subtotal_calculado"/>
+								</tree>
+							</field>
+							<group col="6" class="mt-2 mt-md-0">
+								<group></group>
+								<group class="oe_subtotal_footer oe_right" colspan="2">
+									<field name="subtotal_calculado" widget="monetary" options="{'currrency_field': 'currency_id'}"/>
+									<field name="total_impuesto"/>
+									<div class="oe_subtotal_footer_separator oe_line o_tdlabel">
+										<label for="total_calculado"/>
+									</div>
+									<field name="total_calculado" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'} "/>
+								</group>
+								<div class="oe_clear"/>
+							</group>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	<record id="exdoo_request_view_tree" model="ir.ui.view">
+		<field name="name">exdoo.request.view.tree</field>
+		<field name="model">exdoo.request</field>
+		<field name="arch" type="xml">
+			<tree decoration-danger="state == 'cancelado'" decoration-success="state == 'aprobado'">
+				<field name="name"></field>
+				<field name="fecha_creacion"></field>
+				<field name="fecha_confirmacion"></field>
+				<field name="num_presupuesto"></field>
+				<field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
+			</tree>
+		</field>
+	</record>
+	<record id="exdoo_request_view_search" model="ir.ui.view">
+		<field name="name">exdoo.request.view.search</field>
+		<field name="model">exdoo.request</field>
+		<field name="arch" type="xml">
+			<search>
+				<field name="name"></field>
+				<field name="num_presupuesto"></field>
+			</search>
+		</field>
+	</record>
 </odoo>

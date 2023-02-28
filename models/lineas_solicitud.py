@@ -12,6 +12,13 @@ class LineasSolicitud(models.Model):
     _name = "lineas.solicitud"
     _description = "Líneas de solicitud"
     
+    @api.onchange('producto')
+    def _onchange_name(self):
+        if self.producto:
+            print("Soy self.producto.tax_id ",self.producto.taxes_id)
+            self.tax_id = self.producto.taxes_id
+            self.unidad_medida = self.producto.uom_id
+    
     @api.depends('precio_unitario')
     def _compute_amount(self):
         """
@@ -39,7 +46,7 @@ class LineasSolicitud(models.Model):
         string="Impuesto",
         copy=False
     )
-    precio_unitario = fields.Float(string="Precio unitario")
+    precio_unitario = fields.Float(related="producto.list_price",string="Precio unitario")
     lineas_solicitud_id = fields.Many2one(
         comodel_name="exdoo.request",
         string="Exdoo Request",
