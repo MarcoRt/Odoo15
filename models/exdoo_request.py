@@ -43,6 +43,9 @@ class ExdooRequest(models.Model):
         copy=False,
         default=lambda self: fields.Datetime.now(),
     )
+    contador_ventas = fields.One2many(comodel_name="sale.order",
+        inverse_name="contador_ventas",
+        string="Contador de ventas",)
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(
@@ -137,18 +140,20 @@ class ExdooRequest(models.Model):
         # Vendedor
         self.IsEnoughInStock()
         orden = {}
+        dict_sale = {}
         if self.cliente.id is not False:
             if self.almacen.id is not False:
                 if self.termino_pago.id is not False:
                     dict_sale = {
-                        "name": "Compra de prueba",
+                        "contador_ventas": self.id,
+                        "name": "Venta de prueba " + str(self.id),
                         "partner_id": self.cliente.id,
                         "warehouse_id": self.almacen.id,
                         "payment_term_id": self.termino_pago.id
                     }
                     order_id = self.env['sale.order'].create(dict_sale)
         #sales.order.line
-        #order_id                        
+        #order_id
         for line in self.lineas_solicitud_ids:
             line_dict = {
                 'order_id': order_id.id,
