@@ -46,6 +46,9 @@ class ExdooRequest(models.Model):
     contador_ventas = fields.One2many(comodel_name="sale.order",
         inverse_name="contador_ventas",
         string="Contador de ventas",)
+    contador_compras = fields.One2many(comodel_name="purchase.order",
+        inverse_name="contador_compras",
+        string="Contador de compras")
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(
@@ -98,7 +101,8 @@ class ExdooRequest(models.Model):
             if line.producto.id == id_producto:
                 sellers = line.producto.seller_ids
                 if len(sellers) > 0:
-                    dict_purchase = {"name": "Ejemplo 3", "partner_id": sellers[0].name.id}
+                    dict_purchase = {"contador_compras": self.id,
+                                     "name": "Compra ejemplo "+ str(self.id), "partner_id": sellers[0].name.id}
                     purchase_id = self.env["purchase.order"].create(dict_purchase)
                     producto_dict = {
                         "order_id": purchase_id.id,
