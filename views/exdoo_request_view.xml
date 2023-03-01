@@ -11,9 +11,21 @@
 					<field name='state' widget='statusbar' statusbar_visible='borrador,aprobado'/>
 				</header>
 				<sheet>
+					<div class="oe_button_box" name="button_box">
+						<button class="oe_stat_button" icon="fa-globe icon">
+							<div class="o_field_widget o_stat_info">
+								<span class="o_stat_text">Customer</span>
+								<span class="o_stat_text">Preview</span>
+							</div>
+						</button>
+						<button class="oe_stat_button" icon="fa-truck">
+							<span class="o_stat_text">Ventas</span>
+						</button>
+					</div>
 					<group>
 						<group>
 							<field name="name" placeholder="Nombre"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
+							<field name="almacen"></field>
 							<field name="cliente" domain="[('is_company', '=', True)]"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="usuario"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>
 							<field name="compania"  attrs="{'readonly': [('state', '!=', 'borrador')]}"></field>

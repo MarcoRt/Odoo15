@@ -18,7 +18,7 @@ class LineasSolicitud(models.Model):
             self.tax_id = self.producto.taxes_id
             self.unidad_medida = self.producto.uom_id
     
-    @api.depends('precio_unitario','descuento')
+    @api.depends('precio_unitario','descuento','cantidad')
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
@@ -27,12 +27,11 @@ class LineasSolicitud(models.Model):
             price = line.precio_unitario
             if line.descuento:
                 price = price - (price*(line.descuento/100))
-            print("Soy el price: ", price)
             taxes = line.tax_id.compute_all(price)
             line.update({
-                'total_impuesto': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
-                'total_calculado': taxes['total_included'],
-                'subtotal_calculado': taxes['total_excluded'],
+                'total_impuesto': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])) * line.cantidad,
+                'total_calculado': taxes['total_included'] * line.cantidad,
+                'subtotal_calculado': taxes['total_excluded'] * line.cantidad,
             })
             if self.env.context.get('import_file', False) and not self.env.user.user_has_groups('account.group_account_manager'):
                 line.tax_id.invalidate_cache(['invoice_repartition_line_ids'], [line.tax_id.id])
