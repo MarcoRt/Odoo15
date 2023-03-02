@@ -49,6 +49,8 @@ class ExdooRequest(models.Model):
     contador_compras = fields.One2many(comodel_name="purchase.order",
         inverse_name="contador_compras",
         string="Contador de compras")
+    cantidad_ventas = fields.Integer(string="Cantidad de ventas")
+    cantidad_compras = fields.Integer(string="Cantidad de compras")
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(
@@ -174,6 +176,8 @@ class ExdooRequest(models.Model):
                 line_dict.pop("tax_id")
             orden = self.env['sale.order.line'].create(line_dict)
         # self.state = "aprobado"
+        self.cantidad_ventas = len(self.contador_ventas)
+        self.cantidad_compras = len(self.contador_compras)
         self.fecha_confirmacion = fields.Datetime.now()
 
     def cancelar_presupuesto(self):

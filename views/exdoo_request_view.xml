@@ -12,14 +12,13 @@
 				</header>
 				<sheet>
 					<div class="oe_button_box" name="button_box">
-						<button class="oe_stat_button" icon="fa-globe icon">
-							<div class="o_field_widget o_stat_info">
-								<span class="o_stat_text">Customer</span>
-								<span class="o_stat_text">Preview</span>
-							</div>
+						<button class="oe_stat_button" icon="fa-money">
+								<span class="o_stat_text">Compras</span>
+								<field name="cantidad_compras" readonly="1"></field>
 						</button>
-						<button class="oe_stat_button" icon="fa-truck">
+						<button class="oe_stat_button" icon="fa-dollar">
 							<span class="o_stat_text">Ventas</span>
+							<field name="cantidad_ventas" readonly="1"></field>
 						</button>
 					</div>
 					<group>
