@@ -36,6 +36,12 @@ class ExdooRequest(models.Model):
             i.total_impuesto = total_impuesto_sum
             i.total_calculado = total_calculado_sum
             i.subtotal_calculado = subtotal_calculado_sum
+    
+    def _compute_amount_sale(self):
+        self.cantidad_ventas = len(self.contador_ventas)
+        
+    def _compute_amount_purchase(self):
+        self.cantidad_compras = len(self.contador_compras)
 
     name = fields.Char(string="Nombre")
     fecha_creacion = fields.Datetime(
@@ -49,8 +55,8 @@ class ExdooRequest(models.Model):
     contador_compras = fields.One2many(comodel_name="purchase.order",
         inverse_name="contador_compras",
         string="Contador de compras")
-    cantidad_ventas = fields.Integer(string="Cantidad de ventas")
-    cantidad_compras = fields.Integer(string="Cantidad de compras")
+    cantidad_ventas = fields.Integer(string="Cantidad de ventas", store=False, compute="_compute_amount_sale")
+    cantidad_compras = fields.Integer(string="Cantidad de compras", store=False, compute="_compute_amount_purchase")
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(
@@ -176,8 +182,6 @@ class ExdooRequest(models.Model):
                 line_dict.pop("tax_id")
             orden = self.env['sale.order.line'].create(line_dict)
         # self.state = "aprobado"
-        self.cantidad_ventas = len(self.contador_ventas)
-        self.cantidad_compras = len(self.contador_compras)
         self.fecha_confirmacion = fields.Datetime.now()
 
     def cancelar_presupuesto(self):
@@ -196,3 +200,37 @@ class ExdooRequest(models.Model):
         default = dict(default or {})
         default["name"] = self.name + " (Copia)"
         return super(ExdooRequest, self).copy(default)
+    
+    def action_view_compras(self):
+        compras = self.mapped('contador_compras')
+        action = self.env["ir.actions.actions"]._for_xml_id("purchase.purchase_rfq")
+        if len(compras) > 1:
+            action['domain'] = [('id', 'in', compras.ids)]
+        elif len(compras) == 1:
+            form_view = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
+            if 'views' in action:
+                action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            else:
+                action['views'] = form_view
+            action['res_id'] = compras.id
+        else:
+            action = {'type': 'ir.actions.act_window_close'}
+        return action
+    
+    def action_view_ventas(self):
+        ventas = self.mapped('contador_ventas')
+        action = None
+        action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
+        if len(ventas) > 1:
+            action['domain'] = [('id', 'in', ventas.ids)]
+        elif len(ventas) == 1:
+            form_view = [(self.env.ref('sale.view_order_form').id, 'form')]
+            if 'views' in action:
+                action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            else:
+                action['views'] = form_view
+            action['res_id'] = ventas.id
+        else:
+            action = {'type': 'ir.actions.act_window_close'}
+            
+        return action

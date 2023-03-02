@@ -12,11 +12,11 @@
 				</header>
 				<sheet>
 					<div class="oe_button_box" name="button_box">
-						<button class="oe_stat_button" icon="fa-money">
-								<span class="o_stat_text">Compras</span>
-								<field name="cantidad_compras" readonly="1"></field>
+						<button name="action_view_compras" type="object" class="oe_stat_button" icon="fa-money" attrs="{'invisible': [('cantidad_compras', '=', 0)]}">
+							<span class="o_stat_text">Compras</span>
+							<field name="cantidad_compras" readonly="1"></field>
 						</button>
-						<button class="oe_stat_button" icon="fa-dollar">
+						<button name="action_view_ventas" type="object" class="oe_stat_button" icon="fa-dollar" attrs="{'invisible': [('cantidad_ventas', '=', 0)]}">
 							<span class="o_stat_text">Ventas</span>
 							<field name="cantidad_ventas" readonly="1"></field>
 						</button>
