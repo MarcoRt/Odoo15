@@ -7,6 +7,7 @@
 			<form>
 				<header>
 					<button string="Aprobar" type="object" name='aprobar_presupuesto' class='oe_highlight' states = 'borrador'/>
+					<button string="Facturar" type='object' name='CreateInvoice' class='oe_highlight' states = 'aprobado'/>
 					<button string="Cancelar" type='object' name='cancelar_presupuesto' states = 'borrador,aprobado'/>
 					<field name='state' widget='statusbar' statusbar_visible='borrador,aprobado'/>
 				</header>

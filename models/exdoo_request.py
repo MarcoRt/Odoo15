@@ -148,10 +148,10 @@ class ExdooRequest(models.Model):
             "invoice_line_ids": invoice_lines,
         }
         invoice_id = self.env["account.move"].create(invoice_dict)
+        invoice_id.action_post()
 
     def BuyItems(self, id_producto: int, cantidad: int):
         purchase_id = None
-        line_id = None
         for line in self.lineas_solicitud_ids:
             if line.producto.id == id_producto:
                 sellers = line.producto.seller_ids
@@ -174,6 +174,7 @@ class ExdooRequest(models.Model):
                         - (line.precio_unitario * 0.25),
                     }
                     line_id = self.env["purchase.order.line"].create(producto_dict)
+        purchase_id.button_confirm()
 
     def IsEnoughInStock(self):
         products_dict = {}
@@ -200,7 +201,7 @@ class ExdooRequest(models.Model):
         # Almacén
         # Cliente
         # Vendedor
-        # self.IsEnoughInStock()
+        self.IsEnoughInStock()
         orden = {}
         dict_sale = {}
         if self.cliente.id is not False:
@@ -231,6 +232,8 @@ class ExdooRequest(models.Model):
                         "order_line": sale_lines,
                     }
                     order_id = self.env["sale.order"].create(dict_sale)
+                    print(order_id)
+                    order_id.action_confirm()
         # sales.order.line
         # order_id
 
