@@ -137,8 +137,6 @@ class ExdooRequest(models.Model):
                 "tax_ids": [line.tax_id.id],
             }
             invoice_lines.append(line_dict)
-            # print(line_dict)
-        print(invoice_lines)
         invoice_dict = {
             "invoice_date": self.fecha_confirmacion,
             "contador_facturas": self.id,
@@ -150,7 +148,6 @@ class ExdooRequest(models.Model):
             "invoice_line_ids": invoice_lines,
         }
         invoice_id = self.env["account.move"].create(invoice_dict)
-        print("invoice_id ", invoice_id)
 
     def BuyItems(self, id_producto: int, cantidad: int):
         purchase_id = None
@@ -238,8 +235,7 @@ class ExdooRequest(models.Model):
         # order_id
 
         # orden = self.env['sale.order.line'].create(line_dict)
-        # self.state = "aprobado"
-        self.CreateInvoice()
+        self.state = "aprobado"
         self.fecha_confirmacion = fields.Datetime.now()
 
     def cancelar_presupuesto(self):
@@ -279,7 +275,6 @@ class ExdooRequest(models.Model):
 
     def action_view_ventas(self):
         ventas = self.mapped("contador_ventas")
-        action = None
         action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
         if len(ventas) > 1:
             action["domain"] = [("id", "in", ventas.ids)]
@@ -298,4 +293,20 @@ class ExdooRequest(models.Model):
         return action
 
     def action_view_facturas(self):
-        print("Estoy funcionando")
+        ventas = self.mapped("contador_facturas")
+        action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
+        if len(ventas) > 1:
+            action["domain"] = [("id", "in", ventas.ids)]
+        elif len(ventas) == 1:
+            form_view = [(self.env.ref("account.view_move_form").id, "form")]
+            if "views" in action:
+                action["views"] = form_view + [
+                    (state, view) for state, view in action["views"] if view != "form"
+                ]
+            else:
+                action["views"] = form_view
+            action["res_id"] = ventas.id
+        else:
+            action = {"type": "ir.actions.act_window_close"}
+
+        return action
