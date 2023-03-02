@@ -63,7 +63,7 @@ class ExdooRequest(models.Model):
         comodel_name="account.payment.term", string="Termino de pago"
     )
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
-    compania = fields.Many2one(comodel_name="res.company", string="Compañía")
+    compania = fields.Many2one(comodel_name="res.company", string="Compañía", required=True)
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
     lineas_solicitud_ids = fields.One2many(
         comodel_name="lineas.solicitud",
@@ -101,7 +101,18 @@ class ExdooRequest(models.Model):
     total_impuesto = fields.Monetary(
         string="Total impuesto", store=False, compute="_compute_amount"
     )
-
+    
+    def CreateInvoice(self):
+        invoice_dict = {
+            'move_type': 'out_invoice',
+            'partner_id': self.cliente.id,
+            'invoice_payment_term_id': self.termino_pago.id,
+            'user_id': self.id,
+            'company_id': self.compania.id
+        }
+        purchase_id = self.env["account.move"].create(invoice_dict)
+            
+    
     def BuyItems(self, id_producto: int, cantidad: int):
         purchase_id = None
         line_id = None
@@ -153,7 +164,7 @@ class ExdooRequest(models.Model):
         self.IsEnoughInStock()
         orden = {}
         dict_sale = {}
-        if self.cliente.id is not False:
+        '''if self.cliente.id is not False:
             if self.almacen.id is not False:
                 if self.termino_pago.id is not False:
                     dict_sale = {
@@ -180,8 +191,9 @@ class ExdooRequest(models.Model):
             }
             if False in line_dict.get("tax_id"):
                 line_dict.pop("tax_id")
-            orden = self.env['sale.order.line'].create(line_dict)
+            orden = self.env['sale.order.line'].create(line_dict)'''
         # self.state = "aprobado"
+        self.CreateInvoice()
         self.fecha_confirmacion = fields.Datetime.now()
 
     def cancelar_presupuesto(self):
