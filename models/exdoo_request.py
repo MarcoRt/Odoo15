@@ -42,7 +42,7 @@ class ExdooRequest(models.Model):
 
     def _compute_amount_purchase(self):
         self.cantidad_compras = len(self.contador_compras)
-    
+
     def _compute_amount_invoice(self):
         self.cantidad_facturas = len(self.contador_facturas)
 
@@ -124,16 +124,33 @@ class ExdooRequest(models.Model):
     )
 
     def CreateInvoice(self):
+        journal = self.env["account.journal"].search([("type", "=", "sale")])
+        invoice_lines = []
+        for line in self.lineas_solicitud_ids:
+            line_dict = {
+                "product_id": line.producto.id,
+                "name": line.producto.name,
+                "quantity": line.cantidad,
+                "product_uom_id": line.unidad_medida.id,
+                "price_unit": line.precio_unitario,
+                "account_id": journal.id,
+                "tax_ids": [line.tax_id.id],
+            }
+            invoice_lines.append(line_dict)
+            # print(line_dict)
+        print(invoice_lines)
         invoice_dict = {
-            'invoice_date': self.fecha_confirmacion,
-            'contador_facturas': self.id,
+            "invoice_date": self.fecha_confirmacion,
+            "contador_facturas": self.id,
             "move_type": "out_invoice",
             "partner_id": self.cliente.id,
             "invoice_payment_term_id": self.termino_pago.id,
             "user_id": self.id,
             "company_id": self.compania.id,
+            "invoice_line_ids": invoice_lines,
         }
-        purchase_id = self.env["account.move"].create(invoice_dict)
+        invoice_id = self.env["account.move"].create(invoice_dict)
+        print("invoice_id ", invoice_id)
 
     def BuyItems(self, id_producto: int, cantidad: int):
         purchase_id = None
@@ -186,37 +203,41 @@ class ExdooRequest(models.Model):
         # Almacén
         # Cliente
         # Vendedor
-        self.IsEnoughInStock()
+        # self.IsEnoughInStock()
         orden = {}
         dict_sale = {}
-        """if self.cliente.id is not False:
+        if self.cliente.id is not False:
             if self.almacen.id is not False:
                 if self.termino_pago.id is not False:
+                    sale_lines = []
+                    for line in self.lineas_solicitud_ids:
+                        line_dict = {
+                            #'order_id': order_id.id,
+                            "product_id": line.producto.id,
+                            "name": line.producto.name,
+                            "product_uom_qty": line.cantidad,
+                            "product_uom": line.unidad_medida.id,
+                            "price_unit": line.precio_unitario,
+                            "tax_id": [line.tax_id.id],
+                            "discount": line.descuento,
+                            "price_subtotal": line.subtotal_calculado,
+                        }
+                        if False in line_dict.get("tax_id"):
+                            line_dict.pop("tax_id")
+                        sale_lines.append((0, False, line_dict))
                     dict_sale = {
                         "contador_ventas": self.id,
                         "name": "Venta de prueba " + str(self.id),
                         "partner_id": self.cliente.id,
                         "warehouse_id": self.almacen.id,
-                        "payment_term_id": self.termino_pago.id
+                        "payment_term_id": self.termino_pago.id,
+                        "order_line": sale_lines,
                     }
-                    order_id = self.env['sale.order'].create(dict_sale)
-        #sales.order.line
-        #order_id
-        for line in self.lineas_solicitud_ids:
-            line_dict = {
-                'order_id': order_id.id,
-                'product_id': line.producto.id,
-                'name': line.producto.name,
-                'product_uom_qty': line.cantidad,
-                'product_uom': line.unidad_medida.id,
-                'price_unit': line.precio_unitario,
-                'tax_id': [line.tax_id.id],
-                'discount': line.descuento,
-                'price_subtotal': line.subtotal_calculado
-            }
-            if False in line_dict.get("tax_id"):
-                line_dict.pop("tax_id")
-            orden = self.env['sale.order.line'].create(line_dict)"""
+                    order_id = self.env["sale.order"].create(dict_sale)
+        # sales.order.line
+        # order_id
+
+        # orden = self.env['sale.order.line'].create(line_dict)
         # self.state = "aprobado"
         self.CreateInvoice()
         self.fecha_confirmacion = fields.Datetime.now()
@@ -275,6 +296,6 @@ class ExdooRequest(models.Model):
             action = {"type": "ir.actions.act_window_close"}
 
         return action
-    
+
     def action_view_facturas(self):
         print("Estoy funcionando")
