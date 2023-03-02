@@ -36,12 +36,15 @@ class ExdooRequest(models.Model):
             i.total_impuesto = total_impuesto_sum
             i.total_calculado = total_calculado_sum
             i.subtotal_calculado = subtotal_calculado_sum
-    
+
     def _compute_amount_sale(self):
         self.cantidad_ventas = len(self.contador_ventas)
-        
+
     def _compute_amount_purchase(self):
         self.cantidad_compras = len(self.contador_compras)
+    
+    def _compute_amount_invoice(self):
+        self.cantidad_facturas = len(self.contador_facturas)
 
     name = fields.Char(string="Nombre")
     fecha_creacion = fields.Datetime(
@@ -49,21 +52,39 @@ class ExdooRequest(models.Model):
         copy=False,
         default=lambda self: fields.Datetime.now(),
     )
-    contador_ventas = fields.One2many(comodel_name="sale.order",
+    contador_ventas = fields.One2many(
+        comodel_name="sale.order",
         inverse_name="contador_ventas",
-        string="Contador de ventas",)
-    contador_compras = fields.One2many(comodel_name="purchase.order",
+        string="Contador de ventas",
+    )
+    contador_compras = fields.One2many(
+        comodel_name="purchase.order",
         inverse_name="contador_compras",
-        string="Contador de compras")
-    cantidad_ventas = fields.Integer(string="Cantidad de ventas", store=False, compute="_compute_amount_sale")
-    cantidad_compras = fields.Integer(string="Cantidad de compras", store=False, compute="_compute_amount_purchase")
+        string="Contador de compras",
+    )
+    contador_facturas = fields.One2many(
+        comodel_name="account.move",
+        inverse_name="contador_facturas",
+        string="Contador de facturas",
+    )
+    cantidad_ventas = fields.Integer(
+        string="Cantidad de ventas", store=False, compute="_compute_amount_sale"
+    )
+    cantidad_compras = fields.Integer(
+        string="Cantidad de compras", store=False, compute="_compute_amount_purchase"
+    )
+    cantidad_facturas = fields.Integer(
+        string="Cantidad de facturas", store=False, compute="_compute_amount_invoice"
+    )
     fecha_confirmacion = fields.Datetime(string="Fecha aprobado", copy=False)
     cliente = fields.Many2one(comodel_name="res.partner", string="Cliente")
     termino_pago = fields.Many2one(
         comodel_name="account.payment.term", string="Termino de pago"
     )
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
-    compania = fields.Many2one(comodel_name="res.company", string="Compañía", required=True)
+    compania = fields.Many2one(
+        comodel_name="res.company", string="Compañía", required=True
+    )
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
     lineas_solicitud_ids = fields.One2many(
         comodel_name="lineas.solicitud",
@@ -101,18 +122,19 @@ class ExdooRequest(models.Model):
     total_impuesto = fields.Monetary(
         string="Total impuesto", store=False, compute="_compute_amount"
     )
-    
+
     def CreateInvoice(self):
         invoice_dict = {
-            'move_type': 'out_invoice',
-            'partner_id': self.cliente.id,
-            'invoice_payment_term_id': self.termino_pago.id,
-            'user_id': self.id,
-            'company_id': self.compania.id
+            'invoice_date': self.fecha_confirmacion,
+            'contador_facturas': self.id,
+            "move_type": "out_invoice",
+            "partner_id": self.cliente.id,
+            "invoice_payment_term_id": self.termino_pago.id,
+            "user_id": self.id,
+            "company_id": self.compania.id,
         }
         purchase_id = self.env["account.move"].create(invoice_dict)
-            
-    
+
     def BuyItems(self, id_producto: int, cantidad: int):
         purchase_id = None
         line_id = None
@@ -120,8 +142,11 @@ class ExdooRequest(models.Model):
             if line.producto.id == id_producto:
                 sellers = line.producto.seller_ids
                 if len(sellers) > 0:
-                    dict_purchase = {"contador_compras": self.id,
-                                     "name": "Compra ejemplo "+ str(self.id), "partner_id": sellers[0].name.id}
+                    dict_purchase = {
+                        "contador_compras": self.id,
+                        "name": "Compra ejemplo " + str(self.id),
+                        "partner_id": sellers[0].name.id,
+                    }
                     purchase_id = self.env["purchase.order"].create(dict_purchase)
                     producto_dict = {
                         "order_id": purchase_id.id,
@@ -164,7 +189,7 @@ class ExdooRequest(models.Model):
         self.IsEnoughInStock()
         orden = {}
         dict_sale = {}
-        '''if self.cliente.id is not False:
+        """if self.cliente.id is not False:
             if self.almacen.id is not False:
                 if self.termino_pago.id is not False:
                     dict_sale = {
@@ -191,7 +216,7 @@ class ExdooRequest(models.Model):
             }
             if False in line_dict.get("tax_id"):
                 line_dict.pop("tax_id")
-            orden = self.env['sale.order.line'].create(line_dict)'''
+            orden = self.env['sale.order.line'].create(line_dict)"""
         # self.state = "aprobado"
         self.CreateInvoice()
         self.fecha_confirmacion = fields.Datetime.now()
@@ -212,37 +237,44 @@ class ExdooRequest(models.Model):
         default = dict(default or {})
         default["name"] = self.name + " (Copia)"
         return super(ExdooRequest, self).copy(default)
-    
+
     def action_view_compras(self):
-        compras = self.mapped('contador_compras')
+        compras = self.mapped("contador_compras")
         action = self.env["ir.actions.actions"]._for_xml_id("purchase.purchase_rfq")
         if len(compras) > 1:
-            action['domain'] = [('id', 'in', compras.ids)]
+            action["domain"] = [("id", "in", compras.ids)]
         elif len(compras) == 1:
-            form_view = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
-            if 'views' in action:
-                action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            form_view = [(self.env.ref("purchase.purchase_order_form").id, "form")]
+            if "views" in action:
+                action["views"] = form_view + [
+                    (state, view) for state, view in action["views"] if view != "form"
+                ]
             else:
-                action['views'] = form_view
-            action['res_id'] = compras.id
+                action["views"] = form_view
+            action["res_id"] = compras.id
         else:
-            action = {'type': 'ir.actions.act_window_close'}
+            action = {"type": "ir.actions.act_window_close"}
         return action
-    
+
     def action_view_ventas(self):
-        ventas = self.mapped('contador_ventas')
+        ventas = self.mapped("contador_ventas")
         action = None
         action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
         if len(ventas) > 1:
-            action['domain'] = [('id', 'in', ventas.ids)]
+            action["domain"] = [("id", "in", ventas.ids)]
         elif len(ventas) == 1:
-            form_view = [(self.env.ref('sale.view_order_form').id, 'form')]
-            if 'views' in action:
-                action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            form_view = [(self.env.ref("sale.view_order_form").id, "form")]
+            if "views" in action:
+                action["views"] = form_view + [
+                    (state, view) for state, view in action["views"] if view != "form"
+                ]
             else:
-                action['views'] = form_view
-            action['res_id'] = ventas.id
+                action["views"] = form_view
+            action["res_id"] = ventas.id
         else:
-            action = {'type': 'ir.actions.act_window_close'}
-            
+            action = {"type": "ir.actions.act_window_close"}
+
         return action
+    
+    def action_view_facturas(self):
+        print("Estoy funcionando")

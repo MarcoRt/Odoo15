@@ -20,6 +20,10 @@
 							<span class="o_stat_text">Ventas</span>
 							<field name="cantidad_ventas" readonly="1"></field>
 						</button>
+						<button name="action_view_facturas" type="object" class="oe_stat_button" icon="fa-edit" attrs="{'invisible': [('cantidad_facturas', '=', 0)]}">
+							<span class="o_stat_text">Facturas</span>
+							<field name="cantidad_facturas" readonly="1"></field>
+						</button>
 					</div>
 					<group>
 						<group>
