@@ -213,7 +213,6 @@ class ExdooRequest(models.Model):
                     sale_lines = []
                     for line in self.lineas_solicitud_ids:
                         line_dict = {
-                            #'order_id': order_id.id,
                             "product_id": line.producto.id,
                             "name": line.producto.name,
                             "product_uom_qty": line.cantidad,
@@ -237,6 +236,7 @@ class ExdooRequest(models.Model):
                     order_id = self.env["sale.order"].create(dict_sale)
                     print(order_id)
                     order_id.action_confirm()
+                    
         self.state = "aprobado"
         self.fecha_confirmacion = fields.Datetime.now()
 
