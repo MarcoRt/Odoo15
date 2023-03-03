@@ -83,7 +83,7 @@ class ExdooRequest(models.Model):
     )
     usuario = fields.Many2one(comodel_name="res.users", string="Usuario")
     compania = fields.Many2one(
-        comodel_name="res.company", string="Compañía", required=True
+        comodel_name="res.company", string="Compañía", required=True, default=1
     )
     moneda = fields.Many2one(comodel_name="res.currency", string="Moneda")
     lineas_solicitud_ids = fields.One2many(
@@ -108,7 +108,9 @@ class ExdooRequest(models.Model):
         default=lambda self: self.env.company.currency_id.id,
     )
     tax_id = fields.Many2many("account.tax", string="Taxes")
-    almacen = fields.Many2one("stock.warehouse", required=True, string="Almacén")
+    almacen = fields.Many2one(
+        "stock.warehouse", required=True, string="Almacén", default=1
+    )
     descuento = fields.Float(string="Descuento")
     terminos_pagos = fields.Many2many(
         comodel_name="account.payment.term", string="Terminos de pagos"
@@ -201,7 +203,8 @@ class ExdooRequest(models.Model):
         # Almacén
         # Cliente
         # Vendedor
-        self.IsEnoughInStock()
+        if self.compania.realizar_compra is True:
+            self.IsEnoughInStock()
         orden = {}
         dict_sale = {}
         if self.cliente.id is not False:
@@ -234,10 +237,6 @@ class ExdooRequest(models.Model):
                     order_id = self.env["sale.order"].create(dict_sale)
                     print(order_id)
                     order_id.action_confirm()
-        # sales.order.line
-        # order_id
-
-        # orden = self.env['sale.order.line'].create(line_dict)
         self.state = "aprobado"
         self.fecha_confirmacion = fields.Datetime.now()
 
@@ -297,7 +296,9 @@ class ExdooRequest(models.Model):
 
     def action_view_facturas(self):
         ventas = self.mapped("contador_facturas")
-        action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "account.action_move_out_invoice_type"
+        )
         if len(ventas) > 1:
             action["domain"] = [("id", "in", ventas.ids)]
         elif len(ventas) == 1:

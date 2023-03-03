@@ -6,3 +6,5 @@ from . import cliente_pagos
 from . import contador_ventas
 from . import contador_compras
 from . import contador_facturas
+from . import precio_configuracion
+from . import compania

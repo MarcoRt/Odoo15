@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="exdoo_request_precio_configuracion" model="ir.ui.view">
+        <field name="name">exdoo.request.precio.configuracion</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='show_margins']" position="after">
+                <div class="o_setting_left_pane">
+                    <field name="realizar_compra"/>
+                </div>
+                <div class="o_setting_right_pane">
+                    <label for="realizar_compra"/>
+                    <div class="text-muted">
+                        Activar para realizar compras cuando los productos cotizados no son suficientes.
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
